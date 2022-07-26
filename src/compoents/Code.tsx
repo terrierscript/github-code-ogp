@@ -1,6 +1,7 @@
 import { Prism as SyntaxHighlighter, createElement } from 'react-syntax-highlighter'
 import { darcula } from 'react-syntax-highlighter/dist/cjs/styles/prism'
 // const codeString = `const element = <h1>Hello, world!</h1>`
+
 const codeString = `
 function formatName(user) {
   return user.firstName + ' ' + user.lastName;
@@ -71,14 +72,18 @@ export const OgpCode = () => {
   const paddingY = 20
   const width = 1200
   const height = 630
+  const renderer = codeRenderer({ paddingX, paddingY, lineHeight })
+
   return <svg
     xmlns="http://www.w3.org/2000/svg"
-    width={width} height={height} viewBox={`0 0 ${width} ${height}`}
+    preserveAspectRatio="xMinYMid meet"
+
+    width={width} height={height} viewBox={`0 0 100 400`} // ${width} ${height}`}
   >
     <SyntaxHighlighter language="tsx" style={darcula}
       PreTag={(args) => {
         const fill = args.style.background
-        return <g x={paddingX} y={paddingY}
+        return <g
           fill={fill}
         >
           <rect fill={fill} width={width} height={height} />
@@ -88,11 +93,14 @@ export const OgpCode = () => {
         </g>
       }}
       CodeTag={(args) => {
-        return <text x={paddingX} y={paddingY}
-          {...args}
-        />
+        return <text width={"100%"} {...args} />
       }}
-      renderer={codeRenderer({ paddingX, paddingY, lineHeight })}
+      renderer={(props) => {
+        const components = renderer(props)
+        console.log(components)
+
+        return components
+      }}
     >
       {codeString}
     </SyntaxHighlighter>
