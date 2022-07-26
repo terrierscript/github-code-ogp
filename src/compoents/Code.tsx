@@ -18,13 +18,15 @@ const element = (
 );
 `
 
-export const CodeSample = () => {
+export const OgpCode = () => {
   const lineHeight = 20
   const paddingX = 20
   const paddingY = 20
+  const width = 1200
+  const height = 630
   return <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="500" height="500" viewBox="0 0 500 500"
+    width={width} height={height} viewBox={`0 0 ${width} ${height}`}
   >
     <SyntaxHighlighter language="tsx" style={darcula}
       PreTag={(args) => {
@@ -32,7 +34,7 @@ export const CodeSample = () => {
         return <g x={paddingX} y={paddingY}
           fill={fill}
         >
-          <rect fill={fill} width="500" height="500" />
+          <rect fill={fill} width={width} height={height} />
           <>
             {args.children}
           </>
@@ -45,6 +47,7 @@ export const CodeSample = () => {
       }}
       renderer={(props) => {
         return <>{props.rows.map((row, i) => {
+
           const children: rendererNode[] = (row.children ?? []).map(nodeChildren => {
             const defaultColor = props.stylesheet[`code[class*="language-"]`].color
             const fillColor = nodeChildren.properties?.className
@@ -73,13 +76,12 @@ export const CodeSample = () => {
               y: lineHeight * i + paddingY,
             }
           }
-          const elm = createElement({
+          return createElement({
             node: svgNode,
             stylesheet: props.stylesheet,
             useInlineStyles: props.useInlineStyles,
             key: `code-segment-${i}`
           })
-          return <>{elm}</>
         })}</>
       }}
     >
@@ -89,4 +91,4 @@ export const CodeSample = () => {
 
 
 }
-export default CodeSample
+export default OgpCode
