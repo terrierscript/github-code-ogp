@@ -1,23 +1,8 @@
+import { FC } from 'react'
 import { Prism as SyntaxHighlighter, createElement } from 'react-syntax-highlighter'
 import { darcula } from 'react-syntax-highlighter/dist/cjs/styles/prism'
 // const codeString = `const element = <h1>Hello, world!</h1>`
 
-const codeString = `
-function formatName(user) {
-  return user.firstName + ' ' + user.lastName;
-}
-
-const user = {
-  firstName: 'Harper',
-  lastName: 'Perez'
-};
-
-const element = (
-  <h1>
-    Hello, {formatName(user)}!
-  </h1>
-);
-`
 
 type RenderOption = {
   paddingX: number,
@@ -66,19 +51,22 @@ const codeRenderer = ({ paddingX, paddingY, lineHeight }: RenderOption) => {
   }
 }
 
-export const OgpCode = () => {
+export const OgpCode: FC<{ codeString: string }> = ({ codeString }) => {
   const lineHeight = 20
   const paddingX = 20
   const paddingY = 20
   const width = 1200
   const height = 630
   const renderer = codeRenderer({ paddingX, paddingY, lineHeight })
-
+  const lines = codeString.split("\n").length
+  const maxLength = Math.max(...codeString.split("\n").map(line => line.length))
+  const stringAspect = lines / maxLength
+  console.log(stringAspect, lines, maxLength)
   return <svg
     xmlns="http://www.w3.org/2000/svg"
-    preserveAspectRatio="xMinYMid meet"
-
-    width={width} height={height} viewBox={`0 0 100 400`} // ${width} ${height}`}
+    // preserveAspectRatio="xMinYMin slice"
+    width={width} height={height}
+  // viewBox={`0 0 100 ${stringAspect}`}
   >
     <SyntaxHighlighter language="tsx" style={darcula}
       PreTag={(args) => {
@@ -87,6 +75,7 @@ export const OgpCode = () => {
           fill={fill}
         >
           <rect fill={fill} width={width} height={height} />
+          {/* <rect fill={"red"} width={width} height={width * stringAspect} /> */}
           <>
             {args.children}
           </>

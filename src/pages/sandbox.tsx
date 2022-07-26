@@ -4,6 +4,23 @@ import React from 'react'
 // import { CodeSample } from '../compoents/Code'
 import dynamic from "next/dynamic"
 
+
+const codeString = `
+function formatName(user) {
+  return user.firstName + ' ' + user.lastName;
+}
+
+const user = {
+  firstName: 'Harper',
+  lastName: 'Perez'
+};
+
+const element = (
+  <h1>
+    Hello, {formatName(user)}!
+  </h1>
+);
+`
 const DynamicCode = dynamic(import('../compoents/Code'), {
   ssr: false
 })
@@ -17,7 +34,7 @@ export default function Sandbox() {
       </Head>
       <Center flex={1} h="100vh">
         <Box>
-          <DynamicCode />
+          <DynamicCode codeString={codeString} />
         </Box>
       </Center>
     </Box>
