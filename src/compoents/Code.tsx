@@ -18,6 +18,53 @@ const element = (
 );
 `
 
+type RenderOption = {
+  paddingX: number,
+  paddingY: number,
+  lineHeight: number
+}
+const codeRenderer = ({ paddingX, paddingY, lineHeight }: RenderOption) => {
+  return (props: rendererProps) => {
+    return <>{props.rows.map((row, i) => {
+
+      const children: rendererNode[] = (row.children ?? []).map(nodeChildren => {
+        const defaultColor = props.stylesheet[`code[class*="language-"]`].color
+        const fillColor = nodeChildren.properties?.className
+          .map(cls => {
+            const style = props.stylesheet[cls]
+            return style?.color
+          }).filter(color => !!color)?.[0] ?? defaultColor
+        return {
+          ...nodeChildren,
+          tagName: "tspan",
+          properties: {
+            className: nodeChildren.properties?.className ?? [],
+            fill: fillColor
+          },
+        }
+      })
+      // const isBreak = node.children?.map(c => c.children?.map(c => c.value)).join("\n")
+      // console.log({ isBreak })
+      const svgNode: rendererNode = {
+        ...row,
+        children,
+        tagName: "tspan",
+        properties: {
+          className: row.properties?.className ?? [],
+          x: paddingX,
+          y: lineHeight * i + paddingY,
+        }
+      }
+      return createElement({
+        node: svgNode,
+        stylesheet: props.stylesheet,
+        useInlineStyles: props.useInlineStyles,
+        key: `code-segment-${i}`
+      })
+    })}</>
+  }
+}
+
 export const OgpCode = () => {
   const lineHeight = 20
   const paddingX = 20
@@ -45,45 +92,7 @@ export const OgpCode = () => {
           {...args}
         />
       }}
-      renderer={(props) => {
-        return <>{props.rows.map((row, i) => {
-
-          const children: rendererNode[] = (row.children ?? []).map(nodeChildren => {
-            const defaultColor = props.stylesheet[`code[class*="language-"]`].color
-            const fillColor = nodeChildren.properties?.className
-              .map(cls => {
-                const style = props.stylesheet[cls]
-                return style?.color
-              }).filter(color => !!color)?.[0] ?? defaultColor
-            return {
-              ...nodeChildren,
-              tagName: "tspan",
-              properties: {
-                className: nodeChildren.properties?.className ?? [],
-                fill: fillColor
-              },
-            }
-          })
-          // const isBreak = node.children?.map(c => c.children?.map(c => c.value)).join("\n")
-          // console.log({ isBreak })
-          const svgNode: rendererNode = {
-            ...row,
-            children,
-            tagName: "tspan",
-            properties: {
-              className: row.properties?.className ?? [],
-              x: paddingX,
-              y: lineHeight * i + paddingY,
-            }
-          }
-          return createElement({
-            node: svgNode,
-            stylesheet: props.stylesheet,
-            useInlineStyles: props.useInlineStyles,
-            key: `code-segment-${i}`
-          })
-        })}</>
-      }}
+      renderer={codeRenderer({ paddingX, paddingY, lineHeight })}
     >
       {codeString}
     </SyntaxHighlighter>
