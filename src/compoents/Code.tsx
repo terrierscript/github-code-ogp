@@ -59,26 +59,38 @@ export const OgpCode: FC<{ codeString: string }> = ({ codeString }) => {
   const height = 630
   const renderer = codeRenderer({ paddingX, paddingY, lineHeight })
   const lines = codeString.split("\n").length
+  const fontSize = 12
   const maxLength = Math.max(...codeString.split("\n").map(line => line.length))
   const stringAspect = lines / maxLength
+  const codeSize = {
+    width:maxLength * fontSize,
+    height:width * stringAspect
+  }
   console.log(stringAspect, lines, maxLength)
   return <svg
     xmlns="http://www.w3.org/2000/svg"
-    // preserveAspectRatio="xMinYMin slice"
     width={width} height={height}
-  // viewBox={`0 0 100 ${stringAspect}`}
+    // viewBox={`0 0 ${codeSize.width} ${codeSize.height}`}
   >
     <SyntaxHighlighter language="tsx" style={darcula}
       PreTag={(args) => {
-        const fill = args.style.background
+        const fill =  args.style.background
         return <g
-          fill={fill}
+          // fill={fill}
         >
-          <rect fill={fill} width={width} height={height} />
-          {/* <rect fill={"red"} width={width} height={width * stringAspect} /> */}
-          <>
+
+          <rect fill={"black"} width={width} height={height} />
+          {/* <rect fill={"#220000"} {...codeSize} /> */}
+          <g
+            preserveAspectRatio='xMaxYMax'
+            // width={width} height={height}
+            {...codeSize}
+            viewBox={`0 0 ${codeSize.width} ${codeSize.height}`}>
+            <rect fill={fill} {...codeSize}
+            // width={width} height={height} 
+            />
             {args.children}
-          </>
+          </g>
         </g>
       }}
       CodeTag={(args) => {

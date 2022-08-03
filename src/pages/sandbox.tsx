@@ -5,7 +5,7 @@ import React from 'react'
 import dynamic from "next/dynamic"
 
 
-const codeString = `
+export  const codeString = `
 function formatName(user) {
   return user.firstName + ' ' + user.lastName;
 }
